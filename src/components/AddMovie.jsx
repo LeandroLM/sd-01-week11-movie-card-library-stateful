@@ -9,7 +9,7 @@ class AddMovie extends React.Component {
       imagePath: '',
       storyline: '',
       rating: 0,
-      movieGenre: '',
+      genre: 'Action',
     };
   }
 
@@ -25,8 +25,8 @@ class AddMovie extends React.Component {
     this.setState(AddMovie.newState());
   }
 
-  handleChange(stateProperty, event) {
-    this.setState({ [stateProperty]: event.target.value });
+  handleChange(stateProperty, newStateValue) {
+    this.setState({ [stateProperty]: newStateValue });
   }
 
   renderTitleInput() {
@@ -90,7 +90,7 @@ class AddMovie extends React.Component {
         <textarea
           id={inputIdentifier}
           value={storyline}
-          onChange={(event) => this.handleChange('storyline', event)}
+          onChange={(event) => this.handleChange('storyline', event.target.value)}
         />
       </label>
     );
@@ -109,24 +109,23 @@ class AddMovie extends React.Component {
           min={0}
           max={5}
           value={rating}
-          onChange={(event) => this.handleChange('rating', event)}
+          onChange={(event) => this.handleChange('rating', parseFloat(event.target.value))}
         />
       </label>
     );
   }
 
   renderGenreSelection() {
-    const { movieGenre: selectedGenre } = this.state;
+    const { genre } = this.state;
     const inputIdentifier = 'genre';
 
     return (
       <label htmlFor={inputIdentifier}>
         Movie Genre
-        <select onChange={(event) => this.handleChange('movieGenre', event)}>
+        <select value={genre} onChange={(event) => this.handleChange('genre', event.target.value)}>
           {movieGenres.map((movieGenre) => (
             <option
               key={movieGenre}
-              defaultValue={selectedGenre === movieGenre}
               value={movieGenre}
             >
               {movieGenre}
@@ -143,7 +142,7 @@ class AddMovie extends React.Component {
         type={type}
         id={id}
         value={initialValue}
-        onChange={(event) => this.handleChange(mappedState, event)}
+        onChange={(event) => this.handleChange(mappedState, event.target.value)}
       />
     );
   }
