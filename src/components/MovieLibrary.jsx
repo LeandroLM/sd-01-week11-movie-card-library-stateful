@@ -1,0 +1,86 @@
+import React, { Component } from 'react';
+
+import MovieList from './MovieList';
+import SearchBar from './SearchBar';
+import AddMovie from './AddMovie';
+import data from '../data';
+
+class MovieLibrary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      searchText: '',
+      bookmarkedOnly: true,
+      selectedGenre: '',
+      movies: data,
+    };
+    this.handleSearchTextChange = this.handleSearchTextChange.bind(this);
+    this.handleBookmarkToggling = this.handleBookmarkToggling.bind(this);
+    this.handleSelectedGenreChange = this.handleSelectedGenreChange.bind(this);
+  }
+
+  handleSearchTextChange(event) {
+    this.setState({ searchText: event.target.value.toLowerCase() });
+  }
+
+  handleBookmarkToggling(event) {
+    this.setState({ bookmarkedOnly: !!event.target.checked });
+  }
+
+  handleSelectedGenreChange(event) {
+    this.setState({ selectedGenre: event.target.value });
+  }
+
+  filteredMovies() {
+    const { searchText, bookmarkedOnly, selectedGenre, movies } = this.state;
+    let filteredMovies = movies.filter((movie) => {
+      const { title, subtitle, storyline } = movie;
+      if (title.toLocaleLowerCase().includes(searchText)) return true;
+      if (subtitle.toLocaleLowerCase().includes(searchText)) return true;
+      if (storyline.toLocaleLowerCase().includes(searchText)) return true;
+      return false;
+    });
+
+    if (bookmarkedOnly) {
+      filteredMovies = filteredMovies.filter((movie) => movie.bookmarked);
+    }
+
+    if (selectedGenre) {
+      filteredMovies = filteredMovies.filter((movie) => (
+        movie.genre === selectedGenre
+      ));
+    }
+
+    return filteredMovies;
+  }
+
+  insertMovie(movie) {
+    this.setState(({ movies: currentMovies }) => {
+      const newMovies = [...currentMovies, movie];
+
+      return { movies: newMovies };
+    });
+  }
+
+  render() {
+    const { searchText, bookmarkedOnly, selectedGenre, movies } = this.state;
+    const filteredMovies = this.filteredMovies();
+
+    return (
+      <>
+        <SearchBar
+          searchText={searchText}
+          onSearchTextChange={this.handleSearchTextChange}
+          bookmarkedOnly={bookmarkedOnly}
+          onBookmarkedChange={this.handleBookmarkToggling}
+          selectedGenre={selectedGenre}
+          onSelectedGenreChange={this.handleSelectedGenreChange}
+        />
+        <MovieList movies={filteredMovies} />
+        <AddMovie onClick={(movie) => this.insertMovie(movie)} />
+      </>
+    );
+  }
+}
+
+export default MovieLibrary;
