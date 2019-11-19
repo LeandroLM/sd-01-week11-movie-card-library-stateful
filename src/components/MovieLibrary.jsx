@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import MovieList from './MovieList';
 import SearchBar from './SearchBar';
+import AddMovie from './AddMovie';
 import data from '../data';
 
 class MovieLibrary extends Component {
@@ -53,8 +54,16 @@ class MovieLibrary extends Component {
     return filteredMovies;
   }
 
+  insertMovie(movie) {
+    this.setState(({ movies: currentMovies }) => {
+      const newMovies = [...currentMovies, movie];
+
+      return { movies: newMovies };
+    });
+  }
+
   render() {
-    const { searchText, bookmarkedOnly, selectedGenre } = this.state;
+    const { searchText, bookmarkedOnly, selectedGenre, movies } = this.state;
     const filteredMovies = this.filteredMovies();
 
     return (
@@ -68,6 +77,7 @@ class MovieLibrary extends Component {
           onSelectedGenreChange={this.handleSelectedGenreChange}
         />
         <MovieList movies={filteredMovies} />
+        <AddMovie onClick={(movie) => this.insertMovie(movie)} />
       </>
     );
   }
